@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
 using Com.Hp.SRA.Proofing.Chart.Util;
-using ItextSharpC;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 
 namespace Com.Hp.SRA.Proofing.Chart
 {
@@ -112,7 +113,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         public static Point DrawUpperRectangle(PdfContentByte content, Rectangle pageRect, float barSize)
         {
-            
+
             content.SaveState();
             var state = new PdfGState { FillOpacity = 0.6f };
             content.SetGState(state);
@@ -185,7 +186,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         public void GenerateChart(bool showBarCode, string extraData, Stream output)
         {
-            var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
+            //var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
             var maxElements = CalculateTotalPatchesPerPage(pageRect);
 
             var barSize = (float)maxElements.ColumnNumber * PatchSize;
@@ -193,40 +194,40 @@ namespace Com.Hp.SRA.Proofing.Chart
             var dataProvider = new ExcelDataProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\pe34483.xls"));
             bool firstPage = true;
 
-           
-                using (var pdfDoc = new Document(pageRect))
+
+            using (var pdfDoc = new Document(pageRect))
+            {
+                var writer = PdfWriter.GetInstance(pdfDoc, output);
+                pdfDoc.Open();
+                using (var reader = dataProvider.GetDataReader())
                 {
-                    var writer = PdfWriter.GetInstance(pdfDoc, output);
-                    pdfDoc.Open();
-                    using (var reader = dataProvider.GetDataReader())
+                    if (!reader.Read()) return;
+
+                    while (reader.Read())
                     {
-                        if (!reader.Read()) return;
-
-                        while (reader.Read())
+                        if (!firstPage)
                         {
-                            if(!firstPage)
-                            {
-                                pdfDoc.NewPage();
-                            }
-                            var canvas = writer.DirectContent;
-                            var upBarPoint = DrawUpperRectangle(canvas, pageRect, barSize);
-                            var chartPoint = new Point(upBarPoint.X, (upBarPoint.Y - PosBar2Chart) + BarHeight);
-                            var barCodePoint = new Point(upBarPoint.X, upBarPoint.Y - ConvertUtil.MMToPdfFloat(16.5));
-
-                            var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
-
-                            var data = DrawPatches(pageRect,canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
-                            firstPage = false;
-                            //var color = new CMYKColor(25, 90, 25, 0);
+                            pdfDoc.NewPage();
                         }
+                        var canvas = writer.DirectContent;
+                        var upBarPoint = DrawUpperRectangle(canvas, pageRect, barSize);
+                        var chartPoint = new Point(upBarPoint.X, (upBarPoint.Y - PosBar2Chart) + BarHeight);
+                        var barCodePoint = new Point(upBarPoint.X, upBarPoint.Y - ConvertUtil.MMToPdfFloat(16.5));
+
+                        var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
+
+                        var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
+                        firstPage = false;
+                        //var color = new CMYKColor(25, 90, 25, 0);
                     }
                 }
+            }
 
-            
+
 
         }
 
-        private ContentInfoDTO DrawPatches(Rectangle pageRect,PdfContentByte canvas, Point chartPoint, Point endUpBarPoint, ContentInfoDTO maxElements, System.Data.IDataReader reader, float barSize)
+        private ContentInfoDTO DrawPatches(Rectangle pageRect, PdfContentByte canvas, Point chartPoint, Point endUpBarPoint, ContentInfoDTO maxElements, System.Data.IDataReader reader, float barSize)
         {
             var result = new ContentInfoDTO { RowNumber = 0, ColumnNumber = maxElements.ColumnNumber };
             var squarePoint = new Point(SideBorder + BorderPage, chartPoint.Y - ConvertUtil.MMToPdfFloat(6) - PatchSize);
@@ -256,7 +257,7 @@ namespace Com.Hp.SRA.Proofing.Chart
                 }
                 else
                 {
-                    squarePoint = new Point(squarePoint.X +PatchSize, squarePoint.Y);
+                    squarePoint = new Point(squarePoint.X + PatchSize, squarePoint.Y);
                 }
 
 
@@ -284,7 +285,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         {
             using (Stream stream = File.Create(@"c:\temp\text.pdf"))
             {
-                new Program().GenerateChart(false,"asdasd",stream);
+                new Program().GenerateChart(false, "asdasd", stream);
             }
         }
     }
