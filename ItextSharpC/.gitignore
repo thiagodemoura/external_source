@@ -1,0 +1,7 @@
+bin
+*.sln
+*.csproj.*
+*.suo
+*.csproj
+*ReSharper*
+obj/
