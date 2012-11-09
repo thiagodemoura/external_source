@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
 using Com.Hp.SRA.Proofing.Chart.Util;
+using ItextSharpC;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace Com.Hp.SRA.Proofing.Chart
 {
@@ -115,7 +114,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         {
 
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 0.6f };
+            var state = new PdfGState { FillOpacity = 1f };
             content.SetGState(state);
             content.SetColorFill(BaseColor.BLACK);
 
@@ -132,7 +131,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         public static void DrawSquare(PdfContentByte content, Point point, System.Data.IDataReader reader)
         {
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 0.6f };
+            var state = new PdfGState { FillOpacity = 1f };
             content.SetGState(state);
             var color = new CMYKColor(reader.GetFloat(1), reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
             content.SetColorFill(color);
@@ -186,7 +185,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         public void GenerateChart(bool showBarCode, string extraData, Stream output)
         {
-            //var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
+            var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
             var maxElements = CalculateTotalPatchesPerPage(pageRect);
 
             var barSize = (float)maxElements.ColumnNumber * PatchSize;
@@ -279,6 +278,36 @@ namespace Com.Hp.SRA.Proofing.Chart
             }
             return result;
         }
+
+        /// <summary>
+        /// Draws the page border.
+        /// </summary>
+        /// <param name="docpage">The docpage.</param>
+        /// <returns></returns>
+        protected Point DrawPageBorder(Page docpage)
+        {
+            var black = new Color(0, 0, 0, 1);
+
+            var borderPoint = new Point(0, 0);
+            var borderPath = new Path();
+            var gs = borderPath.GraphicState;
+
+            borderPath.PaintOp = PathPaintOpFlags.Stroke;
+            gs.Width = 3.0; // make the line thickness 2 PDF coordinates.
+            var dashPattern = new List<double> { 4, 6, 7 };
+            gs.DashPattern = dashPattern;
+            gs.StrokeColor = black;// Green Star
+            borderPath.GraphicState = gs;
+            borderPath.PaintOp = PathPaintOpFlags.Stroke;
+
+            var pageRect = docpage.MediaBox;
+            borderPath.AddRect(borderPoint, pageRect.URx - BorderPage, pageRect.URy - BorderPage);
+
+            docpage.Content.AddElement(borderPath);
+            return borderPoint;
+        }
+
+
 
 
         private static void Main(string[] args)
