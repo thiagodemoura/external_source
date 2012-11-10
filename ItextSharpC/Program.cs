@@ -114,7 +114,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         {
             
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 0.6f };
+            var state = new PdfGState { FillOpacity = 1 };
             content.SetGState(state);
             content.SetColorFill(BaseColor.BLACK);
 
@@ -131,14 +131,14 @@ namespace Com.Hp.SRA.Proofing.Chart
         public static void DrawSquare(PdfContentByte content, Point point, System.Data.IDataReader reader)
         {
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 0.6f };
+            var state = new PdfGState { FillOpacity = 1 };
             content.SetGState(state);
             var color = new CMYKColor(reader.GetFloat(1), reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
             content.SetColorFill(color);
 
             content.SetLineWidth(0);
             content.Rectangle(point.X, point.Y, PatchSize, PatchSize);
-            content.ClosePathFillStroke();
+            content.Fill();
             content.RestoreState();
         }
 
@@ -216,6 +216,7 @@ namespace Com.Hp.SRA.Proofing.Chart
                             var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
 
                             var data = DrawPatches(pageRect,canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
+                            
                             firstPage = false;
                             //var color = new CMYKColor(25, 90, 25, 0);
                         }
