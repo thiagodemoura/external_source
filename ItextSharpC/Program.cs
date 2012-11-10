@@ -138,7 +138,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
             content.SetLineWidth(0);
             content.Rectangle(point.X, point.Y, PatchSize, PatchSize);
-            content.ClosePathFillStroke();
+            content.Fill();
             content.RestoreState();
         }
 
