@@ -1,11 +1,14 @@
 ﻿﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
+﻿using System.Drawing;
+﻿using System.IO;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
 using Com.Hp.SRA.Proofing.Chart.Util;
 using ItextSharpC;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+﻿using Rectangle = iTextSharp.text.Rectangle;
 
 namespace Com.Hp.SRA.Proofing.Chart
 {
@@ -77,6 +80,8 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// The patch size
         /// </summary>
         public static float PatchSize = ConvertUtil.MMToPdfFloat(6);
+
+        private const int BorderDifference = 35;
 
         /// <summary>
         /// Draws the diamont.
@@ -216,6 +221,7 @@ namespace Com.Hp.SRA.Proofing.Chart
                         var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
 
                         var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
+                        DrawPageBorder(writer, pageRect, pdfDoc, canvas);
                         firstPage = false;
                         //var color = new CMYKColor(25, 90, 25, 0);
                     }
@@ -282,29 +288,27 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// <summary>
         /// Draws the page border.
         /// </summary>
+        /// <param name="writer"> </param>
+        /// <param name="pageRect"> </param>
+        /// <param name="document"> </param>
+        /// <param name="canvas"> </param>
         /// <param name="docpage">The docpage.</param>
         /// <returns></returns>
-        protected Point DrawPageBorder(Page docpage)
+        protected void DrawPageBorder(PdfWriter writer, Rectangle pageRect, Document document, PdfContentByte canvas)
         {
-            var black = new Color(0, 0, 0, 1);
+            var pageBorderRect = new Rectangle(document.PageSize);
+            var content = writer.DirectContent;
 
-            var borderPoint = new Point(0, 0);
-            var borderPath = new Path();
-            var gs = borderPath.GraphicState;
-
-            borderPath.PaintOp = PathPaintOpFlags.Stroke;
-            gs.Width = 3.0; // make the line thickness 2 PDF coordinates.
-            var dashPattern = new List<double> { 4, 6, 7 };
-            gs.DashPattern = dashPattern;
-            gs.StrokeColor = black;// Green Star
-            borderPath.GraphicState = gs;
-            borderPath.PaintOp = PathPaintOpFlags.Stroke;
-
-            var pageRect = docpage.MediaBox;
-            borderPath.AddRect(borderPoint, pageRect.URx - BorderPage, pageRect.URy - BorderPage);
-
-            docpage.Content.AddElement(borderPath);
-            return borderPoint;
+            pageBorderRect.Left += document.LeftMargin - BorderDifference;
+            pageBorderRect.Right -= document.RightMargin - BorderDifference;
+            pageBorderRect.Top -= document.TopMargin - BorderDifference;
+            pageBorderRect.Bottom += document.BottomMargin - BorderDifference;
+            content.SetColorStroke(BaseColor.BLACK);
+            canvas.SetLineWidth(1f);
+            canvas.SetRGBColorStroke(0, 0, 0);
+            canvas.SetLineDash(6f, 6f, 0f);
+            content.Rectangle(pageBorderRect.Left, pageBorderRect.Bottom, pageBorderRect.Width, pageBorderRect.Height);
+            content.Stroke();
         }
 
 
