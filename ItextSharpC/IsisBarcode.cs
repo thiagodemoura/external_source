@@ -3,8 +3,10 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Com.Hp.SRA.Proofing.Chart.Util;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Point = Com.Hp.SRA.Proofing.Chart.Point;
 using Rectangle = iTextSharp.text.Rectangle;
 
 namespace ItextSharpC
@@ -40,6 +42,10 @@ namespace ItextSharpC
         new byte[]{0, 1, 1, 0, 1, 0, 0, 0, 0}, new byte[]{0, 1, 0, 0, 0, 0, 1, 0, 1}, new byte[]{1, 1, 0, 0, 0, 0, 1, 0, 0},
         new byte[]{0, 1, 1, 0, 0, 0, 1, 0, 0}, new byte[]{0, 1, 0, 1, 0, 1, 0, 0, 0},new byte[] {0, 1, 0, 1, 0, 0, 0, 1, 0},
         new byte[]{0, 1, 0, 0, 0, 1, 0, 1, 0}, new byte[]{0, 0, 0, 1, 0, 1, 0, 1, 0}, new byte[]{0, 1, 0, 0, 1, 0, 1, 0, 0}};
+
+        private Point _point;
+        private readonly float _mmFromDrawningBar = ConvertUtil.MMToPdfFloat(17);
+        private readonly float _mmFromPageBorder = ConvertUtil.MMToPdfFloat(0);
 
         /** The code39 supported characters. */
         private const String Code39Characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
@@ -109,6 +115,10 @@ namespace ItextSharpC
             return barsCheck;
         }
 
+        public void SetPoint(Point point)
+        {
+            this._point = point;
+        }
 
 
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
@@ -119,9 +129,9 @@ namespace ItextSharpC
             const float barWidth = DefaultBarWidthInPoints;
             const float fullHeight = DefaultBarHeightInPoints;
 
-            var barStartX = 0f;
-            var barStartY = 0f;
-            var bars = GetBarsCode39(code);
+            var barStartX = _point.X - _mmFromPageBorder;
+            var barStartY = _point.Y - _mmFromDrawningBar;
+            var bars = GetBarsCode39("123456789012345678901234567890123456789");
             var print = true;
             if (barColor != null)
             {
@@ -142,7 +152,7 @@ namespace ItextSharpC
 
                 if (elemBarCount++ != elementBars) continue; // start a new element
                 elemBarCount = 1;
-                barStartY = 0;
+                barStartY = _point.Y - _mmFromDrawningBar;
                 barStartX += barWidth + distanceBetweenBars;
             }
             cb.Fill();

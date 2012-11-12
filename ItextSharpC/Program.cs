@@ -222,6 +222,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
                         var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
                         DrawPageBorder(writer, pdfDoc, canvas);
+                        DrawBarCode(canvas, pageRect);
                         firstPage = false;
                     }
                 }
@@ -229,6 +230,15 @@ namespace Com.Hp.SRA.Proofing.Chart
 
 
 
+        }
+
+        private static void DrawBarCode(PdfContentByte canvas, Rectangle pageRect)
+        {
+            IsisBarcode isisBarcode = new IsisBarcode();
+            var result = new Point(SideBorder + BorderPage,
+                              pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
+            isisBarcode.SetPoint(result);
+            isisBarcode.PlaceBarcode(canvas, BaseColor.BLACK, BaseColor.BLACK);
         }
 
         private ContentInfoDTO DrawPatches(Rectangle pageRect, PdfContentByte canvas, Point chartPoint, Point endUpBarPoint, ContentInfoDTO maxElements, System.Data.IDataReader reader, float barSize)
@@ -290,7 +300,6 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// <param name="writer"> </param>
         /// <param name="document"> </param>
         /// <param name="canvas"> </param>
-        /// <param name="docpage">The docpage.</param>
         /// <returns></returns>
         protected void DrawPageBorder(PdfWriter writer, Document document, PdfContentByte canvas)
         {
