@@ -223,7 +223,6 @@ namespace Com.Hp.SRA.Proofing.Chart
                         var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
                         DrawPageBorder(writer, pageRect, pdfDoc, canvas);
                         firstPage = false;
-                        //var color = new CMYKColor(25, 90, 25, 0);
                     }
                 }
             }
