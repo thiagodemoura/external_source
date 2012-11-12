@@ -221,7 +221,7 @@ namespace Com.Hp.SRA.Proofing.Chart
                         var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
 
                         var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
-                        DrawPageBorder(writer, pageRect, pdfDoc, canvas);
+                        DrawPageBorder(writer, pdfDoc, canvas);
                         firstPage = false;
                     }
                 }
@@ -288,12 +288,11 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// Draws the page border.
         /// </summary>
         /// <param name="writer"> </param>
-        /// <param name="pageRect"> </param>
         /// <param name="document"> </param>
         /// <param name="canvas"> </param>
         /// <param name="docpage">The docpage.</param>
         /// <returns></returns>
-        protected void DrawPageBorder(PdfWriter writer, Rectangle pageRect, Document document, PdfContentByte canvas)
+        protected void DrawPageBorder(PdfWriter writer, Document document, PdfContentByte canvas)
         {
             var pageBorderRect = new Rectangle(document.PageSize);
             var content = writer.DirectContent;
