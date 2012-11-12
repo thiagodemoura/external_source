@@ -1,14 +1,15 @@
-﻿﻿using System;
-﻿using System.Collections.Generic;
-﻿using System.Drawing;
-﻿using System.IO;
+﻿﻿
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
 using Com.Hp.SRA.Proofing.Chart.Util;
 using ItextSharpC;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-﻿using Rectangle = iTextSharp.text.Rectangle;
+using Rectangle = iTextSharp.text.Rectangle;
 
 namespace Com.Hp.SRA.Proofing.Chart
 {
@@ -59,12 +60,12 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// <summary>
         /// The W pos marker mid
         /// </summary>
-        public static float WPosMarkerMid = WPosMarker / 2;
+        public static float WPosMarkerMid = WPosMarker/2;
 
         /// <summary>
         /// The H pos marker mid
         /// </summary>
-        public static float HPosMarkerMid = HPosMarker / 2;
+        public static float HPosMarkerMid = HPosMarker/2;
 
         /// <summary>
         /// The diamont dist1
@@ -117,15 +118,14 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         public static Point DrawUpperRectangle(PdfContentByte content, Rectangle pageRect, float barSize)
         {
-
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 1f };
+            var state = new PdfGState {FillOpacity = 1f};
             content.SetGState(state);
             content.SetColorFill(BaseColor.BLACK);
 
             content.SetLineWidth(0);
             var result = new Point(SideBorder + BorderPage,
-                              pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
+                                   pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
 
             content.Rectangle(result.X, result.Y, barSize, BarHeight);
             content.ClosePathFillStroke();
@@ -136,7 +136,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         public static void DrawSquare(PdfContentByte content, Point point, System.Data.IDataReader reader)
         {
             content.SaveState();
-            var state = new PdfGState { FillOpacity = 1f };
+            var state = new PdfGState {FillOpacity = 1f};
             content.SetGState(state);
             var color = new CMYKColor(reader.GetFloat(1), reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
             content.SetColorFill(color);
@@ -156,7 +156,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// <param name="point">The point.</param>
         protected void CreatePreDiamont(PdfContentByte content, Rectangle pageRect, Point point)
         {
-            DrawDiamont(content, DiamontDist1 + BorderPage, point.Y + (PatchSize / 2));
+            DrawDiamont(content, DiamontDist1 + BorderPage, point.Y + (PatchSize/2));
         }
 
 
@@ -169,7 +169,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// <param name="point">The point.</param>
         protected void CreatePosDiamont(PdfContentByte content, Rectangle pageRect, Point endUpBarPoint, Point point)
         {
-            DrawDiamont(content, endUpBarPoint.X + DiamontDist1, point.Y + (PatchSize / 2));
+            DrawDiamont(content, endUpBarPoint.X + DiamontDist1, point.Y + (PatchSize/2));
         }
 
         /// <summary>
@@ -180,22 +180,23 @@ namespace Com.Hp.SRA.Proofing.Chart
         protected ContentInfoDTO CalculateTotalPatchesPerPage(Rectangle pageRect)
         {
             var result = new ContentInfoDTO();
-            var usableXSpace = pageRect.Right - 2 * (BorderPage + WPosMarker + DiamontDist1 + DiamontDist2);
-            result.ColumnNumber = Math.Floor(usableXSpace / PatchSize);
+            var usableXSpace = pageRect.Right - 2*(BorderPage + WPosMarker + DiamontDist1 + DiamontDist2);
+            result.ColumnNumber = Math.Floor(usableXSpace/PatchSize);
             var usableYSpace = pageRect.Top - (BorderPage + TrailerEdge + LeaderEdge + BarHeight + PosBar2Chart);
-            result.RowNumber = Math.Floor(usableYSpace / PatchSize);
+            result.RowNumber = Math.Floor(usableYSpace/PatchSize);
             return result;
         }
 
 
         public void GenerateChart(bool showBarCode, string extraData, Stream output)
         {
-            var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
+            var pageRect = new Rectangle((float) ConvertUtil.INToPdf(10.5), (float) ConvertUtil.INToPdf(12.48));
             var maxElements = CalculateTotalPatchesPerPage(pageRect);
 
-            var barSize = (float)maxElements.ColumnNumber * PatchSize;
+            var barSize = (float) maxElements.ColumnNumber*PatchSize;
 
-            var dataProvider = new ExcelDataProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\pe34483.xls"));
+            var dataProvider =
+                new ExcelDataProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\pe34483.xls"));
             bool firstPage = true;
 
 
@@ -222,31 +223,30 @@ namespace Com.Hp.SRA.Proofing.Chart
 
                         var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
                         DrawPageBorder(writer, pdfDoc, canvas);
-                        DrawBarCode(canvas, pageRect);
+                        //DrawBarCode(canvas, pageRect);
                         firstPage = false;
                     }
                 }
             }
-
-
-
         }
 
         private static void DrawBarCode(PdfContentByte canvas, Rectangle pageRect)
         {
             IsisBarcode isisBarcode = new IsisBarcode();
             var result = new Point(SideBorder + BorderPage,
-                              pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
+                                   pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
             isisBarcode.SetPoint(result);
             isisBarcode.PlaceBarcode(canvas, BaseColor.BLACK, BaseColor.BLACK);
         }
 
-        private ContentInfoDTO DrawPatches(Rectangle pageRect, PdfContentByte canvas, Point chartPoint, Point endUpBarPoint, ContentInfoDTO maxElements, System.Data.IDataReader reader, float barSize)
+        private ContentInfoDTO DrawPatches(Rectangle pageRect, PdfContentByte canvas, Point chartPoint,
+                                           Point endUpBarPoint, ContentInfoDTO maxElements,
+                                           System.Data.IDataReader reader, float barSize)
         {
-            var result = new ContentInfoDTO { RowNumber = 0, ColumnNumber = maxElements.ColumnNumber };
+            var result = new ContentInfoDTO {RowNumber = 0, ColumnNumber = maxElements.ColumnNumber};
             var squarePoint = new Point(SideBorder + BorderPage, chartPoint.Y - ConvertUtil.MMToPdfFloat(6) - PatchSize);
             var maxColumnsPerRow = maxElements.ColumnNumber;
-            var maxPatches = maxElements.ColumnNumber * maxElements.RowNumber;
+            var maxPatches = maxElements.ColumnNumber*maxElements.RowNumber;
             var countPacthes = 0;
             bool lastLineWasCompleted;
             do
@@ -261,7 +261,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
 
                 lastLineWasCompleted = false;
-                if (countPacthes % maxColumnsPerRow == 0)
+                if (countPacthes%maxColumnsPerRow == 0)
                 {
                     CreatePreDiamont(canvas, pageRect, squarePoint);
                     CreatePosDiamont(canvas, pageRect, endUpBarPoint, squarePoint);
@@ -275,14 +275,10 @@ namespace Com.Hp.SRA.Proofing.Chart
                 }
 
 
-
                 if (countPacthes == maxPatches)
                 {
                     break;
                 }
-
-
-
             } while (reader.Read());
 
             if (!lastLineWasCompleted)
@@ -319,14 +315,44 @@ namespace Com.Hp.SRA.Proofing.Chart
         }
 
 
-
-
         private static void Main(string[] args)
         {
-            using (Stream stream = File.Create(@"c:\temp\text.pdf"))
+            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
             {
                 new Program().GenerateChart(false, "asdasd", stream);
-            }
+            }*/
+
+            //using (Stream stream = File.Open(@"C:\temp\text_w-out-barcode.pdf", FileMode.Open))
+            //{
+            new Program().InsertBarCode(null);
+            //}
+        }
+
+        private void InsertBarCode(Stream stream)
+        {
+            string pdfTemplate = @"C:\temp\text_w-out-barcode.pdf";
+
+            string imagePath = @"C:\temp\text_w-out-barcode_final.pdf";
+
+            // Create the form filler
+            FileStream pdfOutputFile = new FileStream(imagePath, FileMode.Create);
+
+            PdfReader pdfReader = new PdfReader(@"C:\temp\text_w-out-barcode.pdf");
+
+            PdfStamper pdfStamper = null;
+
+            pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
+
+            PdfContentByte overContent = pdfStamper.GetOverContent(1);
+
+            overContent.Stroke();
+            var pageRect = new Rectangle((float) ConvertUtil.INToPdf(10.5), (float) ConvertUtil.INToPdf(12.48));
+            DrawBarCode(overContent, pageRect);
+            pdfStamper.FormFlattening = true;
+
+            pdfStamper.Close();
+
+            pdfReader.Close();
         }
     }
 }
