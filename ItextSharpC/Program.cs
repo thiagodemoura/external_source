@@ -1,5 +1,4 @@
-﻿﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -81,6 +80,8 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// The patch size
         /// </summary>
         public static float PatchSize = ConvertUtil.MMToPdfFloat(6);
+
+        private string _finalPdfSufix = "{0}_final.pdf";
 
         private const int BorderDifference = 35;
 
@@ -322,37 +323,25 @@ namespace Com.Hp.SRA.Proofing.Chart
                 new Program().GenerateChart(false, "asdasd", stream);
             }*/
 
-            //using (Stream stream = File.Open(@"C:\temp\text_w-out-barcode.pdf", FileMode.Open))
-            //{
-            new Program().InsertBarCode(null);
-            //}
+            new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
         }
 
-        private void InsertBarCode(Stream stream)
+        private void InsertBarCode(String pdfFile)
         {
-            string pdfTemplate = @"C:\temp\text_w-out-barcode.pdf";
-
-            string imagePath = @"C:\temp\text_w-out-barcode_final.pdf";
-
-            // Create the form filler
-            FileStream pdfOutputFile = new FileStream(imagePath, FileMode.Create);
-
-            PdfReader pdfReader = new PdfReader(@"C:\temp\text_w-out-barcode.pdf");
-
-            PdfStamper pdfStamper = null;
-
-            pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
-
+            FileStream pdfOutputFile = new FileStream(FinalFileFormatter(pdfFile), FileMode.Create);
+            PdfReader pdfReader = new PdfReader(pdfFile);
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
             PdfContentByte overContent = pdfStamper.GetOverContent(1);
 
-            overContent.Stroke();
             var pageRect = new Rectangle((float) ConvertUtil.INToPdf(10.5), (float) ConvertUtil.INToPdf(12.48));
             DrawBarCode(overContent, pageRect);
-            pdfStamper.FormFlattening = true;
-
             pdfStamper.Close();
-
             pdfReader.Close();
+        }
+
+        private string FinalFileFormatter(string pdfFile)
+        {
+            return string.Format(_finalPdfSufix, pdfFile.Split('.')[0]);
         }
     }
 }
