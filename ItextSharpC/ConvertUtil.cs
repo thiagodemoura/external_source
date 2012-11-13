@@ -37,6 +37,16 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         }
 
         /// <summary>
+        /// INs to PDF with previous height.
+        /// </summary>
+        /// <param name="inches">The inches.</param>
+        /// <returns></returns>
+        public static double INToPdfWithPreviousHeight(double inches, double previousHeight)
+        {
+            return (inches * PDF_DPI) * previousHeight;
+        }
+
+        /// <summary>
         /// MMs to PDF.
         /// </summary>
         /// <param name="mm">The mm.</param>

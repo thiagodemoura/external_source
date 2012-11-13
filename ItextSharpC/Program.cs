@@ -218,16 +218,16 @@ namespace Com.Hp.SRA.Proofing.Chart
                         var canvas = writer.DirectContent;
                         var upBarPoint = DrawUpperRectangle(canvas, pageRect, barSize);
                         var chartPoint = new Point(upBarPoint.X, (upBarPoint.Y - PosBar2Chart) + BarHeight);
-                        var barCodePoint = new Point(upBarPoint.X, upBarPoint.Y - ConvertUtil.MMToPdfFloat(16.5));
-
+                     
                         var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
 
-                        var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader, barSize);
+                        var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader);
                         DrawPageBorder(writer, pdfDoc, canvas);
-                        //DrawBarCode(canvas, pageRect);
+                        DrawBarCode(canvas, pageRect);
                         firstPage = false;
                     }
                 }
+                pdfDoc.Close();
             }
         }
 
@@ -242,7 +242,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         private ContentInfoDTO DrawPatches(Rectangle pageRect, PdfContentByte canvas, Point chartPoint,
                                            Point endUpBarPoint, ContentInfoDTO maxElements,
-                                           System.Data.IDataReader reader, float barSize)
+                                           System.Data.IDataReader reader)
         {
             var result = new ContentInfoDTO {RowNumber = 0, ColumnNumber = maxElements.ColumnNumber};
             var squarePoint = new Point(SideBorder + BorderPage, chartPoint.Y - ConvertUtil.MMToPdfFloat(6) - PatchSize);
@@ -316,16 +316,6 @@ namespace Com.Hp.SRA.Proofing.Chart
         }
 
 
-        private static void Main(string[] args)
-        {
-            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
-            {
-                new Program().GenerateChart(false, "asdasd", stream);
-            }*/
-
-            new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
-        }
-
         private void InsertBarCode(String pdfFile)
         {
             FileStream pdfOutputFile = new FileStream(FinalFileFormatter(pdfFile), FileMode.Create);
@@ -333,7 +323,7 @@ namespace Com.Hp.SRA.Proofing.Chart
             PdfStamper pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
             PdfContentByte overContent = pdfStamper.GetOverContent(1);
 
-            var pageRect = new Rectangle((float) ConvertUtil.INToPdf(10.5), (float) ConvertUtil.INToPdf(12.48));
+            var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
             DrawBarCode(overContent, pageRect);
             pdfStamper.Close();
             pdfReader.Close();
@@ -342,6 +332,36 @@ namespace Com.Hp.SRA.Proofing.Chart
         private string FinalFileFormatter(string pdfFile)
         {
             return string.Format(_finalPdfSufix, pdfFile.Split('.')[0]);
+        }
+
+        private static void Main(string[] args)
+        {
+            // Method that creates a single frame with BarCode
+            using (Stream stream = File.Create(@"c:\temp\text.pdf"))
+            {
+                new Program().GenerateChart(false, "asdasd", stream);
+            }
+
+            ;
+            // Method that inserts a barcode into a existing frame
+            /**
+            new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
+             */
+
+
+            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
+            {
+                new Program().GenerateMultipleChart(false, "asdasd", stream, 3);
+            }*/
+
+        }
+
+        private void GenerateMultipleChart(bool showBarCode, string extraData, Stream stream, int gradeQuantity)
+        {
+            for (int i = 0; i < gradeQuantity; i++)
+            {
+                GenerateChart(showBarCode, extraData, stream);
+            }
         }
     }
 }
