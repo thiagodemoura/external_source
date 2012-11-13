@@ -2,10 +2,10 @@
 {
     public class Point
     {
-        public Point(float _X, float _Y) 
+        public Point(float x, float y) 
         {
-            X = _X;
-            Y = _Y;
+            X = x;
+            Y = y;
         }
         public float X { get; set; }
         public float Y { get; set; }
