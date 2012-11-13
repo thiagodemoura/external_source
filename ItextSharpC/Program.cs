@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
@@ -81,9 +79,10 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// </summary>
         public static float PatchSize = ConvertUtil.MMToPdfFloat(6);
 
-        private string _finalPdfSufix = "{0}_final.pdf";
+        private const string FinalPdfSufix = "{0}_final.pdf";
 
         private const int BorderDifference = 35;
+        private const float FillOpacity = 1f;
 
         /// <summary>
         /// Draws the diamont.
@@ -120,14 +119,13 @@ namespace Com.Hp.SRA.Proofing.Chart
         public static Point DrawUpperRectangle(PdfContentByte content, Rectangle pageRect, float barSize)
         {
             content.SaveState();
-            var state = new PdfGState {FillOpacity = 1f};
+            var state = new PdfGState {FillOpacity = FillOpacity};
             content.SetGState(state);
             content.SetColorFill(BaseColor.BLACK);
 
             content.SetLineWidth(0);
             var result = new Point(SideBorder + BorderPage,
                                    pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
-
             content.Rectangle(result.X, result.Y, barSize, BarHeight);
             content.ClosePathFillStroke();
             content.RestoreState();
@@ -137,7 +135,7 @@ namespace Com.Hp.SRA.Proofing.Chart
         public static void DrawSquare(PdfContentByte content, Point point, System.Data.IDataReader reader)
         {
             content.SaveState();
-            var state = new PdfGState {FillOpacity = 1f};
+            var state = new PdfGState {FillOpacity = FillOpacity};
             content.SetGState(state);
             var color = new CMYKColor(reader.GetFloat(1), reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
             content.SetColorFill(color);
@@ -178,13 +176,13 @@ namespace Com.Hp.SRA.Proofing.Chart
         /// </summary>
         /// <param name="pageRect">The page rect.</param>
         /// <returns></returns>
-        protected ContentInfoDTO CalculateTotalPatchesPerPage(Rectangle pageRect)
+        public ContentInfoDTO CalculateTotalPatchesPerPage(Rectangle pageRect)
         {
             var result = new ContentInfoDTO();
-            var usableXSpace = pageRect.Right - 2*(BorderPage + WPosMarker + DiamontDist1 + DiamontDist2);
-            result.ColumnNumber = Math.Floor(usableXSpace/PatchSize);
+            var usableXSpace = pageRect.Right - 2 * (BorderPage + WPosMarker + DiamontDist1 + DiamontDist2);
+            result.ColumnNumber = Math.Floor(usableXSpace / PatchSize);
             var usableYSpace = pageRect.Top - (BorderPage + TrailerEdge + LeaderEdge + BarHeight + PosBar2Chart);
-            result.RowNumber = Math.Floor(usableYSpace/PatchSize);
+            result.RowNumber = Math.Floor(usableYSpace / PatchSize);
             return result;
         }
 
@@ -221,7 +219,7 @@ namespace Com.Hp.SRA.Proofing.Chart
                      
                         var endUpBarPoint = new Point(upBarPoint.X + barSize, upBarPoint.Y);
 
-                        var data = DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader);
+                        DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader);
                         DrawPageBorder(writer, pdfDoc, canvas);
                         DrawBarCode(canvas, pageRect);
                         firstPage = false;
@@ -233,7 +231,7 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         private static void DrawBarCode(PdfContentByte canvas, Rectangle pageRect)
         {
-            IsisBarcode isisBarcode = new IsisBarcode();
+            var isisBarcode = new IsisBarcode();
             var result = new Point(SideBorder + BorderPage,
                                    pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
             isisBarcode.IsisPoint = result;
@@ -308,7 +306,7 @@ namespace Com.Hp.SRA.Proofing.Chart
             pageBorderRect.Top -= document.TopMargin - BorderDifference;
             pageBorderRect.Bottom += document.BottomMargin - BorderDifference;
             content.SetColorStroke(BaseColor.BLACK);
-            canvas.SetLineWidth(1f);
+            canvas.SetLineWidth(FillOpacity);
             canvas.SetRGBColorStroke(0, 0, 0);
             canvas.SetLineDash(6f, 6f, 0f);
             content.Rectangle(pageBorderRect.Left, pageBorderRect.Bottom, pageBorderRect.Width, pageBorderRect.Height);
@@ -318,10 +316,10 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         private void InsertBarCode(String pdfFile)
         {
-            FileStream pdfOutputFile = new FileStream(FinalFileFormatter(pdfFile), FileMode.Create);
-            PdfReader pdfReader = new PdfReader(pdfFile);
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
-            PdfContentByte overContent = pdfStamper.GetOverContent(1);
+            var pdfOutputFile = new FileStream(FinalFileFormatter(pdfFile), FileMode.Create);
+            var pdfReader = new PdfReader(pdfFile);
+            var pdfStamper = new PdfStamper(pdfReader, pdfOutputFile);
+            var overContent = pdfStamper.GetOverContent(1);
 
             var pageRect = new Rectangle((float)ConvertUtil.INToPdf(10.5), (float)ConvertUtil.INToPdf(12.48));
             DrawBarCode(overContent, pageRect);
@@ -331,12 +329,12 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         private string FinalFileFormatter(string pdfFile)
         {
-            return string.Format(_finalPdfSufix, pdfFile.Split('.')[0]);
+            return string.Format(FinalPdfSufix, pdfFile.Split('.')[0]);
         }
 
         private void GenerateMultipleChart(bool showBarCode, string extraData, Stream stream, int gradeQuantity)
         {
-            for (int i = 0; i < gradeQuantity; i++)
+            for (var i = 0; i < gradeQuantity; i++)
             {
                 GenerateChart(showBarCode, extraData, stream);
             }
