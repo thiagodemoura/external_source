@@ -40,10 +40,8 @@ namespace Com.Hp.SRA.Proofing.Chart.Template.Provider
                   //Reading from a  Excel file ('2007 format; *.xlsx)
                   excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
               }
-
-
+              stream.Close();
               return excelReader;
-
           }
     }
 }
