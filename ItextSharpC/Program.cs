@@ -192,7 +192,7 @@ namespace Com.Hp.SRA.Proofing.Chart
             var pageRect = new Rectangle((float) ConvertUtil.INToPdf(10.5), (float) ConvertUtil.INToPdf(12.48));
             var maxElements = CalculateTotalPatchesPerPage(pageRect);
 
-            var barSize = (float) maxElements.ColumnNumber*PatchSize;
+            var barSize = (float) maxElements.ColumnNumber * PatchSize;
 
             var dataProvider =
                 new ExcelDataProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\pe34483.xls"));
@@ -221,7 +221,10 @@ namespace Com.Hp.SRA.Proofing.Chart
 
                         DrawPatches(pageRect, canvas, chartPoint, endUpBarPoint, maxElements, reader);
                         DrawPageBorder(writer, pdfDoc, canvas);
-                        DrawBarCode(canvas, pageRect);
+                        if (showBarCode)
+                        {
+                            DrawBarCode(canvas, pageRect);
+                        }
                         firstPage = false;
                     }
                 }
@@ -345,8 +348,14 @@ namespace Com.Hp.SRA.Proofing.Chart
             // Method that creates a single frame with BarCode
             using (Stream stream = File.Create(@"c:\temp\text.pdf"))
             {
-                new Program().GenerateChart(false, "asdasd", stream);
+                new Program().GenerateChart(true, "asdasd", stream);
             }
+
+            // Method that creates a single frame without BarCode
+            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
+            {
+                new Program().GenerateChart(false, "asdasd", stream);
+            }*/
 
             ;
             // Method that inserts a barcode into a existing frame
