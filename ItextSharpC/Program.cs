@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Com.Hp.SRA.Proofing.Chart.Model;
 using Com.Hp.SRA.Proofing.Chart.Template.Provider;
 using Com.Hp.SRA.Proofing.Chart.Util;
 using ItextSharpC;
+using ItextSharpCv10;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Rectangle = iTextSharp.text.Rectangle;
@@ -335,21 +337,28 @@ namespace Com.Hp.SRA.Proofing.Chart
             return string.Format(FinalPdfSufix, pdfFile.Split('.')[0]);
         }
 
-        private void GenerateMultipleChart(bool showBarCode, string extraData, Stream stream, int gradeQuantity)
+        private void GenerateMultipleChart(string pdfFile, int gradeQuantity)
         {
+            /*var files = new string[2] {"",""};
+            const string filename = "C:\temp\text{0}.pdf";
             for (var i = 0; i < gradeQuantity; i++)
             {
-                GenerateChart(showBarCode, extraData, stream);
-            }
+                files.SetValue(string.Format(filename, i+1),i);
+            }*/
+
+            List<string> files = new List<string>();
+            files.Add(@"C:\temp\text1.pdf");
+            files.Add(@"C:\temp\text2.pdf");
+            PdfMergeUtil.MergeFiles(@"C:\temp\merged.pdf",  files);
         }
 
         private static void Main(string[] args)
         {
             // Method that creates a single frame with BarCode
-            using (Stream stream = File.Create(@"c:\temp\text.pdf"))
+            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
             {
                 new Program().GenerateChart(true, "asdasd", stream);
-            }
+            }*/
 
             // Method that creates a single frame without BarCode
             /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
@@ -359,15 +368,11 @@ namespace Com.Hp.SRA.Proofing.Chart
 
             ;
             // Method that inserts a barcode into a existing frame
-            /**
-            new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
-             */
-
-
-            /*using (Stream stream = File.Create(@"c:\temp\text.pdf"))
-            {
-                new Program().GenerateMultipleChart(false, "asdasd", stream, 3);
-            }*/
+            
+            //new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
+             
+             new Program().GenerateMultipleChart(@"c:\temp\text.pdf", 2);
+            
 
         }        
     }
