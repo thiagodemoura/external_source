@@ -334,6 +334,14 @@ namespace Com.Hp.SRA.Proofing.Chart
             return string.Format(_finalPdfSufix, pdfFile.Split('.')[0]);
         }
 
+        private void GenerateMultipleChart(bool showBarCode, string extraData, Stream stream, int gradeQuantity)
+        {
+            for (int i = 0; i < gradeQuantity; i++)
+            {
+                GenerateChart(showBarCode, extraData, stream);
+            }
+        }
+
         private static void Main(string[] args)
         {
             // Method that creates a single frame with BarCode
@@ -354,14 +362,6 @@ namespace Com.Hp.SRA.Proofing.Chart
                 new Program().GenerateMultipleChart(false, "asdasd", stream, 3);
             }*/
 
-        }
-
-        private void GenerateMultipleChart(bool showBarCode, string extraData, Stream stream, int gradeQuantity)
-        {
-            for (int i = 0; i < gradeQuantity; i++)
-            {
-                GenerateChart(showBarCode, extraData, stream);
-            }
-        }
+        }        
     }
 }
