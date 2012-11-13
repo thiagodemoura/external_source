@@ -5,3 +5,7 @@ bin
 *.csproj
 *ReSharper*
 obj/
+.nuget
+packages
+packages.config
+ItextSharpCv10.sln.DotSettings.user

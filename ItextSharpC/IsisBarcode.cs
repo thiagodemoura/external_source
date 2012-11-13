@@ -43,7 +43,7 @@ namespace ItextSharpC
         new byte[]{0, 1, 1, 0, 0, 0, 1, 0, 0}, new byte[]{0, 1, 0, 1, 0, 1, 0, 0, 0},new byte[] {0, 1, 0, 1, 0, 0, 0, 1, 0},
         new byte[]{0, 1, 0, 0, 0, 1, 0, 1, 0}, new byte[]{0, 0, 0, 1, 0, 1, 0, 1, 0}, new byte[]{0, 1, 0, 0, 1, 0, 1, 0, 0}};
 
-        private Point _point;
+        public Point IsisPoint { get; set; }
         private readonly float _mmFromDrawningBar = ConvertUtil.MMToPdfFloat(17);
         private readonly float _mmFromPageBorder = ConvertUtil.MMToPdfFloat(0);
 
@@ -115,12 +115,6 @@ namespace ItextSharpC
             return barsCheck;
         }
 
-        public void SetPoint(Point point)
-        {
-            this._point = point;
-        }
-
-
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
             const float distanceBetweenBars = MmToPoints;
@@ -129,8 +123,8 @@ namespace ItextSharpC
             const float barWidth = DefaultBarWidthInPoints;
             const float fullHeight = DefaultBarHeightInPoints;
 
-            var barStartX = _point.X - _mmFromPageBorder;
-            var barStartY = _point.Y - _mmFromDrawningBar;
+            var barStartX = IsisPoint.X - _mmFromPageBorder;
+            var barStartY = IsisPoint.Y - _mmFromDrawningBar;
             var bars = GetBarsCode39("123456789012345678901234567890123456789");
             var print = true;
             if (barColor != null)
@@ -152,7 +146,7 @@ namespace ItextSharpC
 
                 if (elemBarCount++ != elementBars) continue; // start a new element
                 elemBarCount = 1;
-                barStartY = _point.Y - _mmFromDrawningBar;
+                barStartY = IsisPoint.Y - _mmFromDrawningBar;
                 barStartX += barWidth + distanceBetweenBars;
             }
             cb.Fill();

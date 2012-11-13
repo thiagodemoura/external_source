@@ -236,7 +236,7 @@ namespace Com.Hp.SRA.Proofing.Chart
             IsisBarcode isisBarcode = new IsisBarcode();
             var result = new Point(SideBorder + BorderPage,
                                    pageRect.Height - (BorderPage + LeaderEdge + BarHeight + 1));
-            isisBarcode.SetPoint(result);
+            isisBarcode.IsisPoint = result;
             isisBarcode.PlaceBarcode(canvas, BaseColor.BLACK, BaseColor.BLACK);
         }
 

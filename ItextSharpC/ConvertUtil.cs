@@ -11,6 +11,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// 1 millimeter = 0.0393700787 inches
         /// </summary>
         public const double MM_1 = 0.039370079;
+
         /// <summary>
         /// 1 centimeter = 0.393700787 inches
         /// </summary>
@@ -19,7 +20,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// <summary>
         /// 1 millimeter = 2.834645669 point
         /// </summary>
-       public const double MMTRANSP = 11.65181631;
+        public const double MMTRANSP = 11.65181631;
 
         /// <summary>
         /// PDFDPI
@@ -43,7 +44,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// <returns></returns>
         public static double INToPdfWithPreviousHeight(double inches, double previousHeight)
         {
-            return (inches * PDF_DPI) * previousHeight;
+            return (inches*PDF_DPI)*previousHeight;
         }
 
         /// <summary>
@@ -55,6 +56,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         {
             return MM_1 * mm * PDF_DPI;
         }
+
         /// <summary>
         /// MMs to PDF.
         /// </summary>
@@ -62,7 +64,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// <returns></returns>
         public static float MMToPdfFloat(double mm)
         {
-            return (float)MMToPdf(mm);
+            return (float) MMToPdf(mm);
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// <returns></returns>
         public static float CMToPdfFloat(double cm)
         {
-            return (float)CMToPdf(cm);
+            return (float) CMToPdf(cm);
         }
 
         /// <summary>
@@ -102,22 +104,18 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
         /// <returns></returns>
         public static double PdfToMMUnit25(double size)
         {
-            if (size == 6)
+            if (size.Equals(6))
             {
                 return 0;
             }
-            else 
-            {
-                size = PDFToMM(size);
-                size = (size -6)/0.25;
-            }
+            size = PDFToMM(size);
+            size = (size - 6)/0.25;
             return size;
         }
 
         public static double MM2TransLate(double mm)
         {
-            return mm * MMTRANSP;
+            return mm*MMTRANSP;
         }
-
     }
 }
