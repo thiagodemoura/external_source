@@ -13,7 +13,7 @@ namespace ItextSharpCv10.Test
         [Test]
         public void ShouldGetCode39Ex()
         {
-            string barcode39 = IsisBarcode.GetCode39Ex("abc123defg12312313");
+            var barcode39 = IsisBarcode.GetCode39Ex("abc123defg12312313");
             Assert.AreEqual("+A+B+C123+D+E+F+G12312313", barcode39, "Should be equal +A+B+C123+D+E+F+G12312313");
         }
     }
