@@ -345,9 +345,8 @@ namespace Com.Hp.SRA.Proofing.Chart
             {
                 var formattedFileName = string.Format(filename, i + 1);
                 using (Stream stream = File.Create(formattedFileName))
-                {
                     new Program().GenerateChart(false, "asdasd", stream);
-                }
+
                 files.Add(formattedFileName);
             }
             PdfMergeUtil.MergeFiles(pdfFile,  files, true);
