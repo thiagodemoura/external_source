@@ -339,17 +339,18 @@ namespace Com.Hp.SRA.Proofing.Chart
 
         private void GenerateMultipleChart(string pdfFile, int gradeQuantity)
         {
-            /*var files = new string[2] {"",""};
-            const string filename = "C:\temp\text{0}.pdf";
+            var files = new List<string>();
+            const string filename = @"C:\temp\text{0}.pdf";
             for (var i = 0; i < gradeQuantity; i++)
             {
-                files.SetValue(string.Format(filename, i+1),i);
-            }*/
-
-            List<string> files = new List<string>();
-            files.Add(@"C:\temp\text1.pdf");
-            files.Add(@"C:\temp\text2.pdf");
-            PdfMergeUtil.MergeFiles(@"C:\temp\merged.pdf",  files);
+                var formattedFileName = string.Format(filename, i + 1);
+                using (Stream stream = File.Create(formattedFileName))
+                {
+                    new Program().GenerateChart(false, "asdasd", stream);
+                }
+                files.Add(formattedFileName);
+            }
+            PdfMergeUtil.MergeFiles(pdfFile,  files, true);
         }
 
         private static void Main(string[] args)
@@ -371,9 +372,7 @@ namespace Com.Hp.SRA.Proofing.Chart
             
             //new Program().InsertBarCode(@"C:\temp\text_w-out-barcode.pdf");
              
-             new Program().GenerateMultipleChart(@"c:\temp\text.pdf", 2);
-            
-
+             new Program().GenerateMultipleChart(@"C:\temp\merged.pdf", 6);
         }        
     }
 }

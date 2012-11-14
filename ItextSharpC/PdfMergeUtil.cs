@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -10,7 +9,7 @@ namespace ItextSharpCv10
 {
     class PdfMergeUtil
     {
-        public static void MergeFiles(string destinationFile, List<string> files)
+        public static void MergeFiles(string destinationFile, List<string> files, bool removeMergedFiles)
         {
             try
             {
@@ -23,14 +22,14 @@ namespace ItextSharpCv10
                 var cb = writer.DirectContent;
                 while (f < files.Count)
                 {
-                    int i = 0;
+                    var i = 0;
                     while (i < n)
                     {
                         i++;
                         document.SetPageSize(reader.GetPageSizeWithRotation(i));
                         document.NewPage();
-                        PdfImportedPage page = writer.GetImportedPage(reader, i);
-                        int rotation = reader.GetPageRotation(i);
+                        var page = writer.GetImportedPage(reader, i);
+                        var rotation = reader.GetPageRotation(i);
                         if (rotation == 90 || rotation == 270)
                         {
                             cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(i).Height);
@@ -48,18 +47,31 @@ namespace ItextSharpCv10
                     }
                 }
                 document.Close();
+                if (removeMergedFiles)
+                {
+                    DeleteMergedFiles(files);
+                }
             }
             catch (Exception e)
             {
-                string strOb = e.Message;
+                var strOb = e.Message;
+            }
+        }
+
+        private static void DeleteMergedFiles(IEnumerable<string> files)
+        {
+            foreach (var filename in
+                files.Select(filename => new {filename, fileExists = File.Exists(filename)})
+                     .Where(@t => @t.fileExists)
+                     .Select(@t => @t.filename))
+            {
+                File.Delete(filename);
             }
         }
 
         public int CountPageNo(string strFileName)
         {
-            // we create a reader for a certain document
-            PdfReader reader = new PdfReader(strFileName);
-            // we retrieve the total number of pages
+            var reader = new PdfReader(strFileName);
             return reader.NumberOfPages;
         }
     }
