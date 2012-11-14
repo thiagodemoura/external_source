@@ -14,16 +14,16 @@ namespace ItextSharpCv10
             try
             {
                 var f = 0;
-                var reader = new PdfReader(files[f]);
-                var n = reader.NumberOfPages;
+                var reader = new PdfReader(files.First());
+                var numberOfPages = reader.NumberOfPages;
                 var document = new Document(reader.GetPageSizeWithRotation(1));
                 var writer = PdfWriter.GetInstance(document, new FileStream(destinationFile, FileMode.Create));
                 document.Open();
-                var cb = writer.DirectContent;
+                var content = writer.DirectContent;
                 while (f < files.Count)
                 {
                     var i = 0;
-                    while (i < n)
+                    while (i < numberOfPages)
                     {
                         i++;
                         document.SetPageSize(reader.GetPageSizeWithRotation(i));
@@ -31,19 +31,15 @@ namespace ItextSharpCv10
                         var page = writer.GetImportedPage(reader, i);
                         var rotation = reader.GetPageRotation(i);
                         if (rotation == 90 || rotation == 270)
-                        {
-                            cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(i).Height);
-                        }
+                            content.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(i).Height);
                         else
-                        {
-                            cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
-                        }
+                            content.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
                     }
                     f++;
                     if (f < files.Count)
                     {
                         reader = new PdfReader(files[f]);
-                        n = reader.NumberOfPages;
+                        numberOfPages = reader.NumberOfPages;
                     }
                 }
                 document.Close();
