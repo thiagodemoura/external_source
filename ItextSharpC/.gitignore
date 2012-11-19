@@ -1,0 +1,11 @@
+bin
+*.sln
+*.csproj.*
+*.suo
+*.csproj
+*ReSharper*
+obj/
+.nuget
+packages
+packages.config
+ItextSharpCv10.sln.DotSettings.user
