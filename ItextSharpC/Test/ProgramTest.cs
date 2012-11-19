@@ -1,13 +1,14 @@
 ﻿using Com.Hp.SRA.Proofing.Chart;
 using NUnit.Framework;
 using iTextSharp.text;
+using Com.Hp.SRA.Proofing.Chart.Template;
 
 namespace ItextSharpCv10.Test
 {
     class ProgramTest
     {
         private readonly Rectangle _pageRect = new Rectangle(120, 120, 120, 120);
-        private readonly Program _program = new Program();
+        private readonly PantoneIsisTemplate _program = new PantoneIsisTemplate();
 
         [Test]
         public void ShouldCalculateTotalPatchesPerPage()

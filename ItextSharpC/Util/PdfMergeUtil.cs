@@ -47,7 +47,7 @@ namespace Com.Hp.SRA.Proofing.Chart.Util
                             
                             content.AddTemplate(page, matrix);
                             content.BeginText();
-                            content.SetFontAndSize(baseFont, 9);
+                            content.SetFontAndSize(baseFont, 100);
                             content.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "Data", currentPoint.X, currentPoint.Y,0);
                             content.EndText();
                             currentPoint.Y += 100;

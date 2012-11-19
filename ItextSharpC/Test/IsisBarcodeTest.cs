@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Com.Hp.SRA.Proofing.Chart.Util;
-using ItextSharpC;
+using Com.Hp.SRA.Proofing.Chart.Util.Barcodes;
 using NUnit.Framework;
 
 namespace ItextSharpCv10.Test
